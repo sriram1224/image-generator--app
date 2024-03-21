@@ -2,35 +2,35 @@ import { useEffect, useState } from 'react'
 import './img.css';
 import axios from 'axios';
 export default function ImageGenerator() {
-   const [inputText, setInputText] = useState('');
-  const [imageURL, setImageURL] = useState('');
+   
+  const [image, setImage] = useState('');
   const [error, setError] = useState('');
-  const API_TOKEN = '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'; // Replace with your actual API token
-
+  const API_TOKEN = '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';
+const [input, setInput] = useState('');
   const generateImage = () => {
-    if (inputText) {
+    if (input) {
       axios
         .post(
           'https://api-inference.huggingface.co/models/prompthero/openjourney-v4',
           {
-            inputs: inputText,
+            inputs: input,
           },
           {
             headers: {
               Authorization: `Bearer ${API_TOKEN}`,
             },
-            responseType: 'blob', // Set responseType to 'blob' to get binary data
+            responseType: 'blob',
           }
         )
         .then((response) => {
-          const imageUrl = URL.createObjectURL(response.data);
-          setImageURL(imageUrl);
+          const image = URL.createObjectURL(response.data);
+          setImage(image);
           setError('');
         })
         .catch((error) => {
           setError('Error generating image. Please try again.');
           console.error('Error generating image:', error);
-          setImageURL('');
+          setImage('');
         });
     } else {
       setError('Please enter text before generating the image.');
@@ -44,9 +44,9 @@ export default function ImageGenerator() {
         <form onSubmit={(e) => {e.preventDefault(); generateImage();}}>
           <input
             type="text"
-            placeholder="Enter text..."
-            value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
+            placeholder="Enter the text here..."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
             className="input"
           />
           <button type="submit" className="button">Generate Image</button>
@@ -54,9 +54,9 @@ export default function ImageGenerator() {
         
         {error && <p className="error">{error}</p>}
         
-        {imageURL && (
+        {image && (
           <div className="image-container">
-            <img src={imageURL} alt="Generated" className="image" />
+            <img src={image} alt="GenerateImage" className="image" />
           </div>
         )}
       </div>
